@@ -193,17 +193,19 @@ def main(cfg):
         file.write(model_gauntlet_json)
 
     # unsure what happens if not defined??
+    # TODO: sync var names, oops
     store_path = cfg.get('save_path')
 
     # i think this might catch undefined??
+    # TODO: this will blindly overwrite files, maybe use the run name?
     if store_path is not None:
         print('Uploading to store')
         store = maybe_create_object_store_from_uri(store_path)
 
         # object_name = 'aditi/model_responses/' + file_name
-        store.upload_object(object_name='models.json',
+        store.upload_object(object_name=f'models{cfg.run_name}.json',
                             filename='models.json')
-        store.upload_object(object_name='model_gauntlet.json',
+        store.upload_object(object_name=f'model_gauntlet{cfg.run_name}.json',
                             filename='model_gauntlet.json')
 
 def calculate_markdown_results(logger_keys, logger_data, benchmark_to_taxonomy,
