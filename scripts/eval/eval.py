@@ -12,7 +12,7 @@ import pandas as pd
 import torch
 from composer.loggers import InMemoryLogger, LoggerDestination
 from composer.trainer import Trainer
-from composer.utils import dist, get_device, reproducibility
+from composer.utils import dist, get_device, reproducibility, maybe_create_object_store_from_uri
 from omegaconf import OmegaConf as om
 
 from llmfoundry.callbacks import ModelGauntlet
@@ -172,6 +172,39 @@ def main(cfg):
             traceback.print_exc()  # print the exception to stdout
             print('\nContinuing to next model.\n', flush=True)
 
+    # save the DFs to a JSON and upload them
+
+    # TODO: re-factor to remove duplicated code
+    # df_to_write = {
+    #     'model_gauntlet': model_gauntlet_df,
+    #     'models': models_df,
+    # }
+
+    # Convert DataFrame to JSON
+    model_gauntlet_json = model_gauntlet_df.to_json(orient='records')
+    models_json = models_df.to_json(orient='records')
+
+    # is there a way to avoid writing locally?
+
+    with open('models.json', 'w') as file:
+        file.write(models_json)
+    
+    with open('model_gauntlet.json', 'w') as file:
+        file.write(model_gauntlet_json)
+
+    # unsure what happens if not defined??
+    store_path = cfg.get('save_path')
+
+    # i think this might catch undefined??
+    if store_path is not None:
+        print('Uploading to store')
+        store = maybe_create_object_store_from_uri(store_path)
+
+        # object_name = 'aditi/model_responses/' + file_name
+        store.upload_object(object_name='models.json',
+                            filename='models.json')
+        store.upload_object(object_name='model_gauntlet.json',
+                            filename='model_gauntlet.json')
 
 def calculate_markdown_results(logger_keys, logger_data, benchmark_to_taxonomy,
                                model_name):
