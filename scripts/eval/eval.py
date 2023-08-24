@@ -175,42 +175,67 @@ def main(cfg):
     # save the DFs to a JSON and upload them
 
     # TODO: re-factor to remove duplicated code
-    # df_to_write = {
-    #     'model_gauntlet': model_gauntlet_df,
-    #     'models': models_df,
-    # }
+    df_to_write = {
+        'model_gauntlet': model_gauntlet_df,
+        'models': models_df,
+    }
 
-    # Convert DataFrame to JSON
-    model_gauntlet_json = model_gauntlet_df.to_json(orient='records')
-    print('----model_gauntlet_json----')
-    print(model_gauntlet_json)
-    models_json = models_df.to_json(orient='records')
-    print('----models_json----')
-    print(models_json)
-
-    # is there a way to avoid writing locally?
-
-    with open('models.json', 'w') as file:
-        file.write(models_json)
-    
-    with open('model_gauntlet.json', 'w') as file:
-        file.write(model_gauntlet_json)
-
-    # unsure what happens if not defined??
-    # TODO: sync var names, oops
+    # unsure what happens if not defined, so we just check for None (not sure if this is the right way, need to test)
     eval_save_path = cfg.get('eval_save_path')
 
-    # i think this might catch undefined??
-    # TODO: this will blindly overwrite files, maybe use the run name?
     if eval_save_path is not None:
-        print('Uploading to store')
         store = maybe_create_object_store_from_uri(eval_save_path)
 
-        # object_name = 'aditi/model_responses/' + file_name
-        store.upload_object(object_name=f'models-{cfg.run_name}.json',
-                            filename='models.json')
-        store.upload_object(object_name=f'model_gauntlet-{cfg.run_name}.json',
-                            filename='model_gauntlet.json')
+        for df_name in df_to_write:
+            df = df_to_write[df_name]
+            # sanity check
+            if df is not None:
+                print(f'writing {df_name} to {eval_save_path}')
+                # Convert DataFrame to JSON
+                json_output = df.to_json(orient='records')
+                print(f'----DEBUG: {df_name} json output ----')
+                print(json_output)
+                with open(f'{df_name}.json', 'w') as file:
+                    file.write(json_output)
+
+                
+                print(f'Uploading eval df {df_name} to store {eval_save_path}/{store_file_name}')
+                store_file_name = f'{df_name}-{cfg.run_name}.json'
+                store.upload_object(object_name=store_file_name,
+                                    filename=f'{df_name}.json')
+
+
+    # # Convert DataFrame to JSON
+    # model_gauntlet_json = model_gauntlet_df.to_json(orient='records')
+    # print('----model_gauntlet_json----')
+    # print(model_gauntlet_json)
+    # models_json = models_df.to_json(orient='records')
+    # print('----models_json----')
+    # print(models_json)
+
+    # # is there a way to avoid writing locally?
+
+    # with open('models.json', 'w') as file:
+    #     file.write(models_json)
+    
+    # with open('model_gauntlet.json', 'w') as file:
+    #     file.write(model_gauntlet_json)
+
+    # # unsure what happens if not defined??
+    # # TODO: sync var names, oops
+    # eval_save_path = cfg.get('eval_save_path')
+
+    # # i think this might catch undefined??
+    # # TODO: this will blindly overwrite files, maybe use the run name?
+    # if eval_save_path is not None:
+    #     print('Uploading to store')
+    #     store = maybe_create_object_store_from_uri(eval_save_path)
+
+    #     # object_name = 'aditi/model_responses/' + file_name
+    #     store.upload_object(object_name=f'models-{cfg.run_name}.json',
+    #                         filename='models.json')
+    #     store.upload_object(object_name=f'model_gauntlet-{cfg.run_name}.json',
+    #                         filename='model_gauntlet.json')
 
 def calculate_markdown_results(logger_keys, logger_data, benchmark_to_taxonomy,
                                model_name):
