@@ -182,7 +182,11 @@ def main(cfg):
 
     # Convert DataFrame to JSON
     model_gauntlet_json = model_gauntlet_df.to_json(orient='records')
+    print('----model_gauntlet_json----')
+    print(model_gauntlet_json)
     models_json = models_df.to_json(orient='records')
+    print('----models_json----')
+    print(models_json)
 
     # is there a way to avoid writing locally?
 
