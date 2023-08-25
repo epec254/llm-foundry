@@ -198,9 +198,9 @@ def main(cfg):
                 with open(f'{df_name}.json', 'w') as file:
                     file.write(json_output)
 
-                
-                print(f'Uploading eval df {df_name} to store {eval_save_path}/{store_file_name}')
                 store_file_name = f'{df_name}-{cfg.run_name}.json'
+                print(f'Uploading eval df {df_name} to store {eval_save_path}/{store_file_name}')
+                
                 store.upload_object(object_name=store_file_name,
                                     filename=f'{df_name}.json')
 
