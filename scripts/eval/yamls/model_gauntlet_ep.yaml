@@ -1,0 +1,25 @@
+model_gauntlet:
+  weighting: EQUAL
+  subtract_random_baseline: true
+  rescale_accuracy: true
+  categories:
+  - name: world_knowledge
+    benchmarks:
+    - name: jeopardy
+      num_fewshot: 10
+      random_baseline: 0
+    - name: bigbench_qa_wikidata
+      num_fewshot: 10
+      random_baseline: 0
+    - name: arc_easy
+      num_fewshot: 10
+      random_baseline: 0.25
+    - name: arc_challenge
+      num_fewshot: 10
+      random_baseline: 0.25
+    - name: mmlu
+      num_fewshot: 10
+      random_baseline: 0.25
+    - name: bigbench_misconceptions
+      num_fewshot: 10
+      random_baseline: 0.5
