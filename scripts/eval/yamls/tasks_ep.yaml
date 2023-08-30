@@ -1,0 +1,37 @@
+icl_tasks:
+-
+  label: jeopardy
+  dataset_uri: eval/local_data/world_knowledge/jeopardy_all.jsonl # ADD YOUR OWN DATASET URI
+  num_fewshot: [10]
+  icl_task_type: language_modeling
+  continuation_delimiter: "\nAnswer: " # this separates questions from answers
+  has_categories: true
+-
+  label: bigbench_qa_wikidata
+  dataset_uri: eval/local_data/world_knowledge/bigbench_qa_wikidata.jsonl # ADD YOUR OWN DATASET URI
+  num_fewshot: [10]
+  icl_task_type: language_modeling
+-
+  label: arc_easy
+  dataset_uri: eval/local_data/world_knowledge/arc_easy.jsonl # ADD YOUR OWN DATASET URI
+  num_fewshot: [10]
+  icl_task_type: multiple_choice
+  continuation_delimiter: "\nAnswer: " # this separates questions from answers
+-
+  label: arc_challenge
+  dataset_uri: eval/local_data/world_knowledge/arc_challenge.jsonl # ADD YOUR OWN DATASET URI
+  num_fewshot: [10]
+  icl_task_type: multiple_choice
+  continuation_delimiter: "\nAnswer: " # this separates questions from answers
+-
+  label: mmlu
+  dataset_uri: eval/local_data/world_knowledge/mmlu.jsonl # ADD YOUR OWN DATASET URI
+  num_fewshot: [10]
+  icl_task_type: multiple_choice
+  continuation_delimiter: "\nAnswer: " # this separates questions from answers
+  has_categories: true
+-
+  label: bigbench_misconceptions
+  dataset_uri: eval/local_data/world_knowledge/bigbench_misconceptions.jsonl # ADD YOUR OWN DATASET URI
+  num_fewshot: [10]
+  icl_task_type: multiple_choice
