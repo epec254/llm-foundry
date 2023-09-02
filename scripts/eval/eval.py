@@ -12,7 +12,7 @@ import pandas as pd
 import torch
 from composer.loggers import InMemoryLogger, LoggerDestination
 from composer.trainer import Trainer
-from composer.utils import dist, get_device, reproducibility, maybe_create_object_store_from_uri
+from composer.utils import dist, get_device, reproducibility, maybe_create_object_store_from_uri, parse_uri
 from omegaconf import OmegaConf as om
 
 from llmfoundry.callbacks import ModelGauntlet
@@ -186,6 +186,13 @@ def main(cfg):
     if eval_save_path is not None:
         store = maybe_create_object_store_from_uri(eval_save_path)
 
+        # extract the `prefix` e.g., s3://bucket-name/`prefix`/
+        # this has to be manually appended to each file b/c `maybe_create_object_store_from_uri` doesn't implement prefix has a parameter unlike the ObjectStore class :(
+        backend, bucket_name, save_prefix = parse_uri(eval_save_path)
+        save_prefix = save_prefix.strip('/')
+        if save_prefix:
+            save_prefix += '/'
+
         for df_name in df_to_write:
             df = df_to_write[df_name]
             # sanity check
@@ -198,8 +205,10 @@ def main(cfg):
                 with open(f'{df_name}.json', 'w') as file:
                     file.write(json_output)
 
-                store_file_name = f'{df_name}-{cfg.run_name}.json'
-                print(f'Uploading eval df {df_name} to store {eval_save_path}/{store_file_name}')
+                # TODO: object_name must include the directory (I think)
+                # Review logs of `mcli logs evaluate-7b-and-30b-instruct-VtUm4Y` to determine why it wasn't in the folder
+                store_file_name = f'{save_prefix}{df_name}-{cfg.run_name}.json'
+                print(f'Uploading eval df {df_name} to backend:{backend} bucket:{bucket_name} path:{store_file_name}')
                 
                 store.upload_object(object_name=store_file_name,
                                     filename=f'{df_name}.json')
