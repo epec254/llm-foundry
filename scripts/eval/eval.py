@@ -301,7 +301,7 @@ def calculate_markdown_results(logger_keys, logger_data, benchmark_to_taxonomy,
                     for sub in subscores:
                         row = {
                             'Category': benchmark_to_taxonomy[benchmark],
-                            'Benchmark': None,
+                            'Benchmark': benchmark,
                             'Subtask': sub['subcat'],
                             'Accuracy': sub['val'],
                             'Number few shot': num_shot,
