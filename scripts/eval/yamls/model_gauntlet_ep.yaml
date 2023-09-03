@@ -6,5 +6,5 @@ model_gauntlet:
   - name: world_knowledge
     benchmarks:
     - name: arc_easy
-      num_fewshot: 10
+      num_fewshot: 0
       random_baseline: 0.25

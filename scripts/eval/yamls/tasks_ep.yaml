@@ -2,6 +2,6 @@ icl_tasks:
 -
   label: arc_easy
   dataset_uri: eval/local_data/world_knowledge/arc_easy.jsonl # ADD YOUR OWN DATASET URI
-  num_fewshot: [10]
+  num_fewshot: [0]
   icl_task_type: multiple_choice
-  continuation_delimiter: "\nAnswer: " # this separates questions from answers
+  continuation_delimiter: "Answer: " # this separates questions from answers
